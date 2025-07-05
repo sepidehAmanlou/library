@@ -1,0 +1,23 @@
+<?php
+return [
+    'data_restored_successfully' => 'اطلاعات با موفقیت بازیابی شد.',
+    'data_added_successfully'    => 'اطلاعات با موفقیت اضافه شد.',
+    'data_updated_successfully'  => 'اطلاعات با موفقیت به‌روزرسانی شد.',
+    'data_deleted_successfully'  => 'اطلاعات با موفقیت حذف شد.',
+    'invalid_credentials'        => 'نام کاربری یا رمز عبور اشتباه است.',
+    'login_successful'           => 'ورود با موفقیت انجام شد.',
+    'register_successful'        => 'ثبت‌نام با موفقیت انجام شد.',
+    'no_token_provided'          => 'توکن ارسال نشده است.',
+    'invalid_or_expired_token'   => 'توکن نامعتبر یا منقضی شده است.',
+    'unauthorized'               => 'شما اجازه دسترسی به این بخش را ندارید.',
+    'Access_denied_Only_admins_can_perform_this_action' => 'دسترسی ممنوع: تنها مدیران مجاز به انجام این عملیات هستند.',
+    'register_successful' => 'ثبت‌نام با موفقیت انجام شد.',
+    'invalid_credentials' => 'نام کاربری یا رمز عبور اشتباه است.',
+    'login_successful' => 'ورود با موفقیت انجام شد.',
+    'book_already_added' => 'این کتاب قبلاً به لیست شما اضافه شده است.',
+    'book_added_successfully' => 'کتاب با موفقیت به لیست شما اضافه شد.',
+    'book_not_found_in_your_list' => 'کتاب موردنظر در لیست شما یافت نشد.',
+    'book_status_updated' => 'وضعیت کتاب با موفقیت به‌روزرسانی شد.',
+    'book_removed_from_your_list' => 'کتاب از لیست شما حذف شد.',
+    
+];
