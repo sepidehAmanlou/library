@@ -19,5 +19,10 @@ return [
     'book_not_found_in_your_list' => 'کتاب موردنظر در لیست شما یافت نشد.',
     'book_status_updated' => 'وضعیت کتاب با موفقیت به‌روزرسانی شد.',
     'book_removed_from_your_list' => 'کتاب از لیست شما حذف شد.',
-    
+    'order_not_found'          => 'سفارش مورد نظر یافت نشد.',
+    'payment_success'          => 'پرداخت با موفقیت انجام شد.',
+    'payment_failed'           => 'پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.',
+    'payment_request_failed'   => 'درخواست پرداخت با خطا مواجه شد.',
+    'payment_redirect_url'     => 'لینک پرداخت ایجاد شد.',
+
 ];

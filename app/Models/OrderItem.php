@@ -30,6 +30,17 @@ public function book()
     return $this->belongsTo(Book::class,'book_id');
 }
 
+ protected static function booted()
+    {
+        static::saved(function ($orderItem) {
+            $orderItem->order->updateTotalPrice();
+        });
+
+        static::deleted(function ($orderItem) {
+            $orderItem->order->updateTotalPrice();
+        });
+    }
+    
     public function getCreatedAtJalaliAttribute()
 {
     return $this->created_at ? Jalalian::fromCarbon(Carbon::parse($this->created_at))->format('Y/m/d H:i'): null;

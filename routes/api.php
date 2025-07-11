@@ -124,6 +124,7 @@ Route::prefix('/payments')->name('payments.')->middleware('auth.token')->group(f
     Route::get('/', [PaymentController::class, 'index'])->name('index');
     Route::post('/', [PaymentController::class, 'store'])->name('store');
     Route::get('/{payment}', [PaymentController::class, 'show'])->name('show');
+    Route::post('/pay', [PaymentController::class, 'pay'])->name('pay');
 
     Route::middleware('check.admin')->group(function(){
 
@@ -132,4 +133,7 @@ Route::prefix('/payments')->name('payments.')->middleware('auth.token')->group(f
     });
 
 });
+
+Route::get('/callback', [PaymentController::class, 'callback'])->name('callback');
+
 

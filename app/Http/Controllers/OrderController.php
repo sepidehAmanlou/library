@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
         $pageSize = $request->input('page_size', 10);
         $details = Order::with(['user', 'orderItems', 'payments'])->paginate($pageSize);
-        return $this->output(200, 'errors.data_restored_successfully', $details);
+        return $this->output(200, ('errors.data_restored_successfully'), $details);
     }
 
     public function store(Request $request)
@@ -35,21 +35,22 @@ class OrderController extends Controller
         $order = Order::create($data);
         $order->load(['user', 'orderItems', 'payments']);
 
-        return $this->output(200, 'errors.data_added_successfully', $order);
+        return $this->output(200, ('errors.data_added_successfully'), $order);
     }
 
-    public function show(Order $order)
+    public function show(Request $request ,Order $order)
     {
+        if ($order->user_id !== $request->auth_user->id && !$request->auth_user->isAdmin()) {
+        return $this->output(403, ('errors.unauthorized'));
+    }
         $order->load(['user', 'orderItems', 'payments']);
-        return $this->output(200, 'errors.data_restored_successfully', $order->toArray());
+        return $this->output(200, ('errors.data_restored_successfully'), $order->toArray());
     }
 
     public function update(Request $request, Order $order)
     {
-        $data = $request->only(['user_id', 'total_price', 'status', 'payment_ref']);
+        $data = $request->only([ 'status', 'payment_ref']);
         $rules = [
-            'user_id'      => 'required|integer|exists:users,id',
-            'total_price'  => 'required|numeric|min:0',
             'status'       => 'required|in:pending,paid,canceled',
             'payment_ref'  => 'sometimes|nullable|string|max:255'
         ];
@@ -62,12 +63,12 @@ class OrderController extends Controller
         $order->update($data);
         $order->load(['user', 'orderItems', 'payments']);
 
-        return $this->output(200, 'errors.data_updated_successfully', $order);
+        return $this->output(200, ('errors.data_updated_successfully'), $order);
     }
 
     public function destroy(Order $order)
     {
         $order->delete();
-        return $this->output(200, 'errors.data_deleted_successfully');
+        return $this->output(200, ('errors.data_deleted_successfully'));
     }
 }

@@ -35,6 +35,16 @@ class Order extends Model
      return $this->hasMany(Payment::class,'order_id');
   }
 
+  public function updateTotalPrice()
+    {
+        $total = $this->orderItems->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+
+        $this->total_price = $total;
+        $this->save();
+    }
+
     public function getCreatedAtJalaliAttribute()
 {
     return $this->created_at ? Jalalian::fromCarbon(Carbon::parse($this->created_at))->format('Y/m/d H:i'): null;

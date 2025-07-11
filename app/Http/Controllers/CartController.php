@@ -12,16 +12,24 @@ class CartController extends Controller
 
     public function index(Request $request)
     {
+        $user = $request->auth_user;
+    
         $pageSize = $request->input('page_size', 10);
-        $details = Cart::with(['user', 'book'])->paginate($pageSize);
-        return $this->output(200, 'errors.data_restored_successfully', $details);
+        $details = Cart::where('user_id',$user->id)->with('book')->paginate($pageSize);
+        $total =$details->sum(fn($item)=>$item->book->price*$item->quantity);
+
+        return $this->output(200, ('errors.data_restored_successfully'),[
+            'items'=>$details,
+            'total_price'=>$total
+        ]);
     }
 
     public function store(Request $request)
     {
-        $data = $request->only(['user_id', 'book_id', 'quantity']);
+        $user =$request->auth_user;
+
+        $data = $request->only([ 'book_id', 'quantity']);
         $rules = [
-            'user_id'  => 'required|integer|exists:users,id',
             'book_id'  => 'required|integer|exists:books,id',
             'quantity' => 'required|integer|min:1',
         ];
@@ -29,25 +37,46 @@ class CartController extends Controller
         if (!$validatedData->isSuccessful()) {
             return $validatedData;
         }
+        $cart = Cart::where('user_id',$user->id)->where('book_id',$data['book_id'])->first();
 
-        $cart = Cart::create($data);
-        $cart->load(['user', 'book']);
+        if($cart)
+        {
+            $cart->quantity += $data['quantity'];
+            $cart->save();
+        }
+        else
+        {
+            $cart = Cart::create([
+                'user_id' => $user->id,
+                'book_id' => $data['book_id'],
+                'quantity'=> $data['quantity']
+            ]);
+        }
+        $cart->load(['book','user']);
 
-        return $this->output(200, 'errors.data_added_successfully', $cart);
+        return $this->output(200,( 'errors.data_added_successfully'), $cart);
     }
 
-    public function show(Cart $cart)
+    public function show(Request $request ,Cart $cart)
     {
+        if($cart->user->id !== $request->auth_user->id && !$request->auth_user->isAdmin())
+        {
+            return $this->output(403,('errors.unauthorized'));
+        }
+       
         $cart->load(['user', 'book']);
-        return $this->output(200, 'errors.data_restored_successfully', $cart->toArray());
+        return $this->output(200, ('errors.data_restored_successfully'), $cart->toArray());
     }
 
     public function update(Request $request, Cart $cart)
     {
-        $data = $request->only(['user_id', 'book_id', 'quantity']);
+        if($cart->user->id !== $request->auth_user->id && !$request->auth_user->isAdmin())
+        {
+            return  $this->output(403,('errors.unauthorized'));
+        }
+        $data = $request->only(['quantity']);
         $rules = [
-            'user_id'  => 'required|integer|exists:users,id',
-            'book_id'  => 'required|integer|exists:books,id',
+    
             'quantity' => 'required|integer|min:1',
         ];
         $validatedData = $this->validation($data, $rules);
@@ -58,12 +87,16 @@ class CartController extends Controller
         $cart->update($data);
         $cart->load(['user', 'book']);
 
-        return $this->output(200, 'errors.data_updated_successfully', $cart);
+        return $this->output(200, ('errors.data_updated_successfully'), $cart);
     }
 
-    public function destroy(Cart $cart)
+    public function destroy( Request $request ,Cart $cart)
     {
+         if($cart->user->id !== $request->auth_user->id && !$request->auth_user->isAdmin())
+        {
+        return $this->output(403,('errors.unauthorized'));
+        }
         $cart->delete();
-        return $this->output(200, 'errors.data_deleted_successfully');
+        return $this->output(200, ('errors.data_deleted_successfully'));
     }
 }
