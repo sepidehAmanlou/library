@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Morilog\Jalali\Jalalian;
 use Carbon\Carbon;
-class BookCategory extends Model
+
+class Language extends Model
 {
     use HasFactory;
     protected $casts = [
@@ -16,32 +17,29 @@ class BookCategory extends Model
     protected $appends = ['created_at_jalali', 'updated_at_jalali'];
 
     protected $fillable = [
-        'name',
-        'primary',
+        'title',
+        'code',
+        'code_flag',
+        'status',
+        'primary'
     ];
-    
-    public function books()
+
+    public function bookCategories()
     {
-        return $this->hasMany(Book::class,'category_id');
-    }
-    
-    public function language()
-    {
-        return $this->belongsTo(Language::class,'language_id');
+        return $this->hasMany(BookCategory::class,'language_id');
     }
 
-
-public function getCreatedAtJalaliAttribute()
+    public function getCreatedAtJalaliAttribute()
 {
     return $this->created_at ? Jalalian::fromCarbon(Carbon::parse($this->created_at))->format('Y/m/d H:i'): null;
 }
 
-public function getUpdatedAtJalaliAttribute()
+    public function getUpdatedAtJalaliAttribute()
 {
     return $this->updated_at ? Jalalian::fromCarbon(Carbon::parse($this->updated_at))->format('Y/m/d H:i'): null;
 }
 
-// public function getDeletedAtJalaliAttribute()
+//    public function getDeletedAtJalaliAttribute()
 // {
 //     return $this->deleted_at ? Jalalian::fromCarbon(Carbon::parse($this->deleted_at))->format('Y/m/d H:i'): null;
 // }

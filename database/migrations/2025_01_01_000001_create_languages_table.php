@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('book_categories', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('language_id')->constrained('languages')->cascadeOnDelete();
-            $table->string('name');
+            $table->string('title',200);
+            $table->string('code');
+            $table->string('code_flag');
+            $table->enum('status',['active','deactive'])->default('active');
             $table->boolean('primary')->default(false);
             $table->timestamps();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('book_categories');
+        Schema::dropIfExists('languages');
     }
 };

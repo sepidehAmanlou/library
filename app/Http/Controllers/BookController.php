@@ -14,7 +14,7 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $pageSize=$request->input('page_size',10);
-        $details = Book::with('bookCategory')->paginate($pageSize); 
+        $details = Book::with('bookCategory.language')->paginate($pageSize); 
         return $this->output(200,('errors.data_restored_successfully'),$details);
     }
 
@@ -32,14 +32,13 @@ class BookController extends Controller
         return $validatedData;
        
         $book = Book::create($data);
-        // $book->load('bookCategory');
-
+        
         return $this->output(200,('errors.data_added_successfully'),$book);
     }
 
     public function show(Book $book)
     {
-        $book->load('bookCategory');
+        $book->load('bookCategory.language');
         return $this->output(200,('errors.data_restored_successfully'),$book->toArray());
     }
 

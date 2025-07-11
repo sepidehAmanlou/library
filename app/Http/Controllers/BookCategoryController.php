@@ -12,7 +12,7 @@ class BookCategoryController extends Controller
     public function index(Request $request)
     {
         $pageSize = $request->input('page_size',10);
-        $details=BookCategory::paginate($pageSize);
+        $details=BookCategory::with('language')->paginate($pageSize);
         return $this->output(200,('errors.data_restored_successfully'),$details);
     }
 
@@ -20,6 +20,7 @@ class BookCategoryController extends Controller
     {
         $data = $request->only(['name','primary']);
         $rules =[
+         'language_id'=>'required|integer|exists:languages,id',   
          'name'=>'required|string|min:3,max:255',
          'primary'=>'required|boolean'
         ];
@@ -47,12 +48,14 @@ class BookCategoryController extends Controller
 
     public function show(BookCategory $bookCategory)
     {
+        $bookCategory->load('language');
         return $this->output(200,('errors.data_restored_successfully'),$bookCategory->toArray());
     }
     public function update(Request $request,BookCategory $bookCategory)
     {
         $data=$request->only(['name','primary']);
         $rules=[
+            'language_id'=>'required|integer|exists:languages,id',
             'name'=>'required|string|min:3,max:255',
             'primary'=>'required|boolean'
         ];

@@ -12,6 +12,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\InstallerController;
+use App\Http\Controllers\LanguageController;
 
 
 Route::prefix('/book_categories')->name('bookCategories.')->middleware('auth.token')->group( function(){
@@ -135,5 +137,23 @@ Route::prefix('/payments')->name('payments.')->middleware('auth.token')->group(f
 });
 
 Route::get('/callback', [PaymentController::class, 'callback'])->name('callback');
+
+
+Route::prefix('/languages')->name('languages.')->group(function () {
+    
+    Route::get('/', [LanguageController::class, 'index'])->name('index');
+    Route::get('/{language}', [LanguageController::class, 'show'])->name('show');
+
+    Route::middleware(['auth.token', 'check.admin'])->group(function () {
+
+        Route::post('/', [LanguageController::class, 'store'])->name('store');
+        Route::put('/{language}', [LanguageController::class, 'update'])->name('update');
+        Route::delete('/{language}', [LanguageController::class, 'destroy'])->name('destroy');
+    });
+});
+
+
+Route::get('/install/check', [InstallerController::class, 'checkInstallation'])->name('checkInstallation');
+Route::post('/install', [InstallerController::class, 'install'])->name('install');
 
 

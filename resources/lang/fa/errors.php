@@ -24,5 +24,8 @@ return [
     'payment_failed'           => 'پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.',
     'payment_request_failed'   => 'درخواست پرداخت با خطا مواجه شد.',
     'payment_redirect_url'     => 'لینک پرداخت ایجاد شد.',
+    'system_installed' => 'سیستم قبلاً نصب شده است.',
+    'system_not_installed' => 'سیستم هنوز نصب نشده است.',
+    'system_already_installed' => 'امکان نصب مجدد وجود ندارد.',
 
 ];
