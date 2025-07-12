@@ -27,5 +27,7 @@ return [
     'system_installed' => 'سیستم قبلاً نصب شده است.',
     'system_not_installed' => 'سیستم هنوز نصب نشده است.',
     'system_already_installed' => 'امکان نصب مجدد وجود ندارد.',
+    'system_installation_failed'=>'نصب سیستم با خطا مواجه شد.',
+    'system_installed_successfully'=>'سیستم با موفقیت نصب شد'
 
 ];
