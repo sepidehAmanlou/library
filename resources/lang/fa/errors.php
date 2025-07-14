@@ -28,6 +28,9 @@ return [
     'system_not_installed' => 'سیستم هنوز نصب نشده است.',
     'system_already_installed' => 'امکان نصب مجدد وجود ندارد.',
     'system_installation_failed'=>'نصب سیستم با خطا مواجه شد.',
-    'system_installed_successfully'=>'سیستم با موفقیت نصب شد'
+    'system_installed_successfully'=>'سیستم با موفقیت نصب شد',
+    'invalid_language_code.'=>'کد زبان معتبر نیست ',
+    'invalid_country_flag'=>'کد پرچم معتبر نیست ',
+    'invalid_language_flag_combination' => 'کد پرچم با زبان انتخاب شده مطابقت ندارد.',
 
 ];
