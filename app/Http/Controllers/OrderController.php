@@ -35,7 +35,7 @@ class OrderController extends Controller
         $order = Order::create($data);
         $order->load(['user', 'orderItems', 'payments']);
 
-        return $this->output(200, ('errors.data_added_successfully'), $order);
+        return $this->output(201, ('errors.data_added_successfully'), $order);
     }
 
     public function show(Request $request ,Order $order)

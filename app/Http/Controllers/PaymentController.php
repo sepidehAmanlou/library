@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Morilog\Jalali\Jalalian;
 
 class PaymentController extends Controller
 {
@@ -31,7 +32,7 @@ class PaymentController extends Controller
             'ref_number' => 'sometimes|nullable|string|max:255',
             'paid_at'    => 'sometimes|nullable|date',
         ];
-
+      
         $validatedData = $this->validation($data, $rules);
         if (!$validatedData->isSuccessful()) {
             return $validatedData;
@@ -40,7 +41,7 @@ class PaymentController extends Controller
         $payment = Payment::create($data);
         $payment->load('order');
 
-        return $this->output(200, ('errors.data_added_successfully'), $payment);
+        return $this->output(201, ('errors.data_added_successfully'), $payment);
     }
 
     public function show(Payment $payment)
@@ -60,7 +61,7 @@ class PaymentController extends Controller
             'ref_number' => 'sometimes|nullable|string|max:255',
             'paid_at'    => 'sometimes|nullable|date',
         ];
-
+        
         $validatedData = $this->validation($data, $rules);
         if (!$validatedData->isSuccessful()) {
             return $validatedData;
@@ -97,10 +98,27 @@ class PaymentController extends Controller
     }
 
     $amount = $order->total_price * 10;
-    $callbackUrl = route('payments.callback', ['order_id' => $order->id]);
+    $callbackUrl = route('callback', ['order_id' => $order->id]);
+     // حالت تست داخلی
+    $merchantId = env('ZARINPAL_MERCHANT_ID');
 
+    if (empty($merchantId) || app()->environment('local')) {
+        DB::transaction(function () use ($order) {
+            Payment::create([
+                'order_id' => $order->id,
+                'amount' => $order->total_price,
+                'status' => 'pending',
+                'gateway' => 'zarinpal',
+            ]);
+        });
+
+        return $this->output(200, ('errors.payment_redirect_url'), [
+            'pay_url' => "https://example.com/mock-pay/{$order->id}"
+        ]);
+    }
     $zarinData = [
-        'MerchantID'  => env('ZARINPAL_MERCHANT_ID'),
+        // 'MerchantID'  => env('ZARINPAL_MERCHANT_ID'),
+        'MerchantID'  => $merchantId,           
         'Amount'      => $amount,
         'Description' => "پرداخت سفارش شماره {$order->id}",
         'CallbackURL' => $callbackUrl,
@@ -143,6 +161,28 @@ public function callback(Request $request)
 
     $merchantId = env('ZARINPAL_MERCHANT_ID');
 
+    // حالت تست داخلی
+    if (empty($merchantId) || app()->environment('local')) {
+        // فرض پرداخت موفق
+        $payment = Payment::where('order_id', $order->id)
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($payment) {
+            DB::transaction(function () use ($payment, $order, $authority) {
+                $payment->update([
+                    'status' => 'success',
+                    'ref_number' => $authority ?? 'MOCK_AUTHORITY',
+                    'paid_at' => now(),
+                ]);
+                $order->update(['status' => 'paid']);
+            });
+        }
+
+        return $this->output(200, ('errors.payment_success') . ' (mock)');
+    }
+
     if ($status === 'OK') {
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
@@ -155,22 +195,18 @@ public function callback(Request $request)
         $result = $response->json();
 
         if (isset($result['data']['code']) && $result['data']['code'] == 100) {
-            $payment = Payment::where('order_id', $order->id)
-                ->where('status', 'pending')
-                ->orderBy('created_at', 'desc')
-                ->first();
+            $payment = Payment::where('order_id', $order->id)->where('status', 'pending')->orderBy('created_at', 'desc')->first();
 
             if ($payment) {
                 DB::transaction(function () use ($payment, $order, $authority) {
                     $payment->update([
                         'status' => 'success',
-                        'ref_number' => $authority,
+                        'ref_number' => $authority ,
                         'paid_at' => now(),
                     ]);
                     $order->update(['status' => 'paid']);
                 });
             }
-
             return $this->output(200, ('errors.payment_success'));
         } else {
             $payment = Payment::where('order_id', $order->id)

@@ -41,7 +41,7 @@ class OrderItemController extends Controller
         $orderItem = OrderItem::create($data);
         $orderItem->load(['order', 'book']);
 
-        return $this->output(200, ('errors.data_added_successfully'), $orderItem);
+        return $this->output(201, ('errors.data_added_successfully'), $orderItem);
     }
 
     public function show( Request $request,OrderItem $orderItem)

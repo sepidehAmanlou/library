@@ -63,7 +63,7 @@ class LanguageController extends Controller
 
         $language = Language::create($data);
 
-        return $this->output(200, ('errors.data_added_successfully'), $language);
+        return $this->output(201, ('errors.data_added_successfully'), $language);
     }
 
     public function show(Language $language)

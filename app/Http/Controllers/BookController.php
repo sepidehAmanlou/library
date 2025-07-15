@@ -33,7 +33,7 @@ class BookController extends Controller
        
         $book = Book::create($data);
         
-        return $this->output(200,('errors.data_added_successfully'),$book);
+        return $this->output(201,('errors.data_added_successfully'),$book);
     }
 
     public function show(Book $book)

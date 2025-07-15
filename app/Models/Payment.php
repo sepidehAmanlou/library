@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\JalaliToCarbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Morilog\Jalali\Jalalian;
@@ -23,6 +24,10 @@ class Payment extends Model
         'paid_at'
     ];
 
+     protected $casts = [
+        'paid_at' => JalaliToCarbon::class,
+    ];
+
     public function order()
     {
         return $this->belongsTo(Order::class,'order_id');
@@ -42,4 +47,5 @@ class Payment extends Model
 // {
 //     return $this->deleted_at ? Jalalian::fromCarbon(Carbon::parse($this->deleted_at))->format('Y/m/d H:i'): null;
 // }
+
 }

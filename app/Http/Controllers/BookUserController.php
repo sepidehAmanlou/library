@@ -30,7 +30,7 @@ class BookUserController extends Controller
             'added_at'=>now()
          ]);       
           $bookUser = BookUser::with(['book','user'])->where('book_id',$book->id)->where('user_id',$user->id)->first();
-         return $this->output(200,('errors.book_added_successfully'),$bookUser);
+         return $this->output(201,('errors.book_added_successfully'),$bookUser);
     }
 
     public function update(Request $request,Book $book)

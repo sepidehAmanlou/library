@@ -40,7 +40,7 @@ class UserController extends Controller
         
         
         $user = User::create($data);
-         return $this->output(200,('errors.data_added_successfully'),$user);
+         return $this->output(201,('errors.data_added_successfully'),$user);
         
       }
 

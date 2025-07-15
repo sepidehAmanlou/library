@@ -43,7 +43,7 @@ class BookCategoryController extends Controller
             }
         }
         $bookCategory = BookCategory::create($data);
-         return $this->output(200,('errors.data_added_successfully'),$bookCategory);
+         return $this->output(201,('errors.data_added_successfully'),$bookCategory);
     }
 
     public function show(BookCategory $bookCategory)

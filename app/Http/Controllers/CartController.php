@@ -54,7 +54,7 @@ class CartController extends Controller
         }
         $cart->load(['book','user']);
 
-        return $this->output(200,( 'errors.data_added_successfully'), $cart);
+        return $this->output(201,( 'errors.data_added_successfully'), $cart);
     }
 
     public function show(Request $request ,Cart $cart)

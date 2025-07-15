@@ -32,7 +32,7 @@ class AuthController extends Controller
         $data['password']=bcrypt($data['password']);
         
         $user =User::create($data);
-        return $this->output(200,('errors.register_successful'),$user);
+        return $this->output(201,('errors.register_successful'),$user);
     }
 
 

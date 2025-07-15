@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\BookCategoryController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\UserCategoryController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\LanguageController;
-
+use App\Http\Controllers\OrderAdminController;
 
 Route::prefix('/book_categories')->name('bookCategories.')->middleware('auth.token')->group( function(){
 
@@ -106,6 +107,11 @@ Route::prefix('/orders')->name('orders.')->middleware('auth.token')->group(funct
     Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
     });
 });
+
+Route::prefix('admin')->middleware(['auth.token', 'check.admin'])->group(function () {
+    Route::post('/orders', [OrderAdminController::class, 'store'])->name('admin.store');
+});
+
 
 Route::prefix('/order_items')->name('orderItems.')->middleware('auth.token')->group(function(){
 

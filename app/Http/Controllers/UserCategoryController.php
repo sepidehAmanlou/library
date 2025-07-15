@@ -28,7 +28,7 @@ class UserCategoryController extends Controller
         return $validatedData;
 
         $userCategory = UserCategory::create($data);
-        return $this->output(200,('errors.data_added_successfully'),$userCategory);
+        return $this->output(201,('errors.data_added_successfully'),$userCategory);
     }
 
     public function show(UserCategory $userCategory)
