@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Morilog\Jalali\Jalalian;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class BookUser extends Model
+class BookUser extends Pivot
 {
      use HasFactory;
+    protected $table = 'book_users';
     protected $hidden = ['created_at', 'updated_at'];
     protected $appends = ['created_at_jalali', 'updated_at_jalali'];
 
@@ -19,7 +21,7 @@ class BookUser extends Model
         'status',
         'added_at',
     ];
-   
+    public $timestamps = true;
     public function book()
     {
         return $this->belongsTo(Book::class,'book_id');

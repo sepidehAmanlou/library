@@ -18,7 +18,7 @@ class BookCategoryController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->only(['name','primary']);
+        $data = $request->only(['name','primary','language_id']);
         $rules =[
          'language_id'=>'required|integer|exists:languages,id',   
          'name'=>'required|string|min:3,max:255',
@@ -53,7 +53,7 @@ class BookCategoryController extends Controller
     }
     public function update(Request $request,BookCategory $bookCategory)
     {
-        $data=$request->only(['name','primary']);
+        $data=$request->only(['name','primary','language_id']);
         $rules=[
             'language_id'=>'required|integer|exists:languages,id',
             'name'=>'required|string|min:3,max:255',

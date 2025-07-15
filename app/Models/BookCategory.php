@@ -18,6 +18,7 @@ class BookCategory extends Model
     protected $fillable = [
         'name',
         'primary',
+        'language_id'
     ];
     
     public function books()

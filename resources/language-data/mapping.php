@@ -1,7 +1,7 @@
 <?php
 return [
-    'en'     => 'US',  // English - United States
-    'en_GB'  => 'GB',  // British English - United Kingdom
+    'en'     => 'GB',  // English - United States
+    // 'en_GB'  => 'GB',  // British English - United Kingdom
     'fr'     => 'FR',  // French - France
     'de'     => 'DE',  // German - Germany
     'es'     => 'ES',  // Spanish - Spain

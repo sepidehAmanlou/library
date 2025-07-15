@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\BookUser;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class BookUserController extends Controller
     public function store(Request $request,Book $book)
     {
         $user = $request->auth_user;
-        if($user->books()->where('book_id',$book)->exists())
+        if($user->books()->where('book_id',$book->id)->exists())
         {
          return $this->output(401,('errors.book_already_added'));
         }
@@ -28,8 +29,8 @@ class BookUserController extends Controller
             'status'=>'unread',
             'added_at'=>now()
          ]);       
-
-         return $this->output(200,('errors.book_added_successfully'));
+          $bookUser = BookUser::with(['book','user'])->where('book_id',$book->id)->where('user_id',$user->id)->first();
+         return $this->output(200,('errors.book_added_successfully'),$bookUser);
     }
 
     public function update(Request $request,Book $book)
@@ -52,18 +53,21 @@ class BookUserController extends Controller
         $user->books()->updateExistingPivot($book->id,[
            'status'=> $data['status']
         ]);
-        return $this->output(200,( 'errors.book_status_updated'));
+
+      $bookUser = BookUser::with(['book','user'])->where('book_id',$book->id)->where('user_id',$user->id)->first();
+
+        return $this->output(200,( 'errors.book_status_updated'),$bookUser);
     }
 
     public function destroy(Request $request, Book $book)
     {
         $user = $request->auth_user;
-        if(!$user->books()->where('book_id',$book)->exists())
+        if(!$user->books()->where('book_id',$book->id)->exists())
         {
             return $this->output(404,('errors.book_not_found_in_your_list'));
         }
         
-        $user->books()->unattach($book->id);
+        $user->books()->detach($book->id);
         return $this->output(200,( 'errors.book_removed_from_your_list'));
     }
 }

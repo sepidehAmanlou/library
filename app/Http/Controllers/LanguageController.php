@@ -77,7 +77,7 @@ class LanguageController extends Controller
         $rules =[
             'title'=>'required|string|max:200',
             'code'=>'required|string|max:255',
-            'code_flag'=>'required|string|max:255',
+            'code_flag'=>['required', 'string', new LanguageFlagMatch($data['code'] ?? '')],
             'status'=>'required|in:active,deactive',
             'primary'=>'required|boolean'
         ];
@@ -85,38 +85,46 @@ class LanguageController extends Controller
         if(!$validatedData->isSuccessful())
         return $validatedData;
 
+        if (!$data['primary'] && $language->primary) {
+        $other = Language::where('id', '!=', $language->id)->first();
+        if ($other) {
+            $other->update(['primary' => true]);
+        } else {
+            $data['primary'] = true; 
+        }
+          }
         if($data['primary'])
 
         {
-            Language::where('primary',true)->update(['primary'=>false]);
-        }else{
-            if($language->primary)
-            {
-               $otherLnguage = Language::where('id','!=',$language->id)->first();
-            
-            if($otherLnguage)
-            {
-                $otherLnguage->update(['primary'=>true]);
-            }else{
-                $data['primary']= true ; 
-            }
-        }else {
-            $existingPrimary = Language::where('primary', true)->first();
+            Language::where('id','!=',$language->id)->where('primary',true)->update(['primary'=>false]);
+
+        } else {
+            $existingPrimary = Language::where('id','!=',$language->id)->where('primary', true)->first();
             if (!$existingPrimary) {
                 $data['primary'] = true;
             }
         }
          
-      $language->update($data);
-       return $this->output(200,('errors.data_updated_successfully'),$language);
-        }
-        
+        $language->update($data);
+
+        return $this->output(200,('errors.data_updated_successfully'),$language);
     }
 
     public function destroy(Language $language)
     {
-       $language->update(['status' => 'deactive']);
+       $wasPrimary = $language->primary;
 
-    return $this->output(200, __('errors.data_deleted_successfully'));
+        $language->update(['status' => 'deactive', 'primary' => false]);
+
+        if ($wasPrimary) {
+        
+        $newPrimary = Language::where('status', 'active')->first();
+
+        if ($newPrimary) {
+            $newPrimary->update(['primary' => true]);
+        }
+    }
+
+        return $this->output(200, ('errors.data_deleted_successfully'));
     }
 }

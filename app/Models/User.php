@@ -48,7 +48,7 @@ class User extends Authenticatable
 //    user book
    public function books()
    {
-       return $this->belongsToMany(Book::class,'book_users')->withPivot('status','added_at')->withTimestamps();
+       return $this->belongsToMany(Book::class,'book_users')->using(BookUser::class)->withPivot('status','added_at')->withTimestamps();
    }
    
    public function carts()
@@ -60,6 +60,16 @@ class User extends Authenticatable
    {
      return $this->hasMany(Order::class,'user_id');
    }
+   public function bookUsers()
+    {
+        return $this->hasMany(BookUser::class, 'user_id');
+    }
+
+    public function isAdmin()
+   {
+    return $this->user_category_id === 1; 
+   }
+
     public function getCreatedAtJalaliAttribute()
 {
     return $this->created_at ? Jalalian::fromCarbon(Carbon::parse($this->created_at))->format('Y/m/d H:i'): null;

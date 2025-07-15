@@ -27,7 +27,7 @@ class Book extends Model
 // user books
     public function users()
     {
-        return $this->belongsToMany(User::class,'book_users')->withPivot('status','added_at')->withTimestamps();
+        return $this->belongsToMany(User::class,'book_users')->using(BookUser::class)->withPivot('status','added_at')->withTimestamps();
     }
     
     public function carts()
